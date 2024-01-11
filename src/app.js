@@ -4,7 +4,7 @@ import sequelize from './config/database.js';
 import './models/index.js';
 import userRouter from './routes/userRouter.js';
 import profileRouter from './routes/profileRouter.js';
-import userController from './controllers/userController.js';
+import * as userController from './controllers/userController.js';
 
 dotenv.config();
 
