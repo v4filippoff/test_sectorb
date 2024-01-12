@@ -45,8 +45,16 @@ export async function getProfile(req, res) {
   }
 }
 
-export async function getAllProfiles(request, response) {
-  response.send('hello');
+export async function getAllProfiles(req, res) {
+  let {page} = req.query;
+  page = parseInt(page);
+  page = page > 0 ? page : 1;
+  try {
+    const profiles = await UserService.getPaginatedProfilesByPage(page);
+    return res.status(200).json(profiles);
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
 }
 
 export async function editProfile(request, response) {

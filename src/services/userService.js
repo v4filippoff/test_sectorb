@@ -1,7 +1,10 @@
 import bcrypt from 'bcrypt';
+import dotenv from 'dotenv';
 import User from '../models/user.js';
 import {normalizeSequelizeValidationError} from '../utils/errors.js';
 import JWTTokenService from './jwtTokenService.js';
+
+dotenv.config();
 
 class UserService {
   static async registerUser({firstName, email, password}) {
@@ -37,6 +40,20 @@ class UserService {
     try {
       const user = await User.findByPk(userId);
       return user;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  static async getPaginatedProfilesByPage(pageNumber) {
+    const limit = parseInt(process.env.PAGINATE_LIMIT) || 10;
+    const offset = (pageNumber - 1) * limit;
+    try {
+      const pageProfiles = await User.findAndCountAll({limit: limit, offset: offset, order: [['createdAt', 'ASC']]});
+      const {count: totalItems, rows: profiles} = pageProfiles;
+      const totalPages = Math.ceil(totalItems / limit);
+      return {totalItems, profiles, totalPages, pageNumber};
     } catch (error) {
       console.log(error);
       throw error;

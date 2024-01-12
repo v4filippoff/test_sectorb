@@ -40,7 +40,7 @@ const User = sequelize.define('User', {
   updatedAt: false,
   hooks: {
     beforeCreate: async (user, options) => {
-      const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS);
+      const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS) || 10;
       const hashedPassword = await bcrypt.hash(user.password, saltRounds);
       user.password = hashedPassword;
     },
