@@ -46,6 +46,16 @@ class UserService {
     }
   }
 
+  static async getProfileByEmail(userEmail) {
+    try {
+      const user = await User.findOne({where: {email: userEmail}});
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
   static async getPaginatedProfilesByPage(pageNumber) {
     const limit = parseInt(process.env.PAGINATE_LIMIT) || 10;
     const offset = (pageNumber - 1) * limit;
@@ -58,6 +68,22 @@ class UserService {
       console.log(error);
       throw error;
     }
+  }
+
+  static async editProfile(user, updateData) {
+    try {
+      user.set(updateData);
+      await user.save();
+      return user;
+    } catch (error) {
+      console.log(error);
+      error.data = normalizeSequelizeValidationError(error);
+      throw error;
+    }
+  }
+
+  static getUserFieldsToNull() {
+    return ['firstName', 'lastName', 'email', 'gender', 'photo'];
   }
 }
 
