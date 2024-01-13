@@ -4,13 +4,10 @@ import multer from 'multer';
 import mime from 'mime-types';
 import {photoFileValidator} from '../validators/index.js';
 
+const photoUploadPath = './src/uploads/photos/';
 const photoStorage = multer.diskStorage({
-  destination: async (req, file, cb) => {
-    const uploadPath = './src/uploads/photos/';
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, {recursive: true});
-    }
-    cb(null, uploadPath);
+  destination: (req, file, cb) => {
+    cb(null, photoUploadPath);
   },
   filename: (req, file, cb) => {
     const extension = mime.extension(file.mimetype);
@@ -20,5 +17,9 @@ const photoStorage = multer.diskStorage({
   },
 });
 const uploadPhoto = multer({storage: photoStorage, fileFilter: photoFileValidator});
+
+if (!fs.existsSync(photoUploadPath)) {
+  fs.mkdirSync(photoUploadPath, {recursive: true});
+}
 
 export {uploadPhoto};
